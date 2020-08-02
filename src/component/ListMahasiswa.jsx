@@ -2,14 +2,14 @@ import React, { useEffect, useState, useContext } from 'react'
 import { Container, Table, Button } from 'reactstrap'
 import axios from 'axios'
 import { AuthContext } from '../App'
-import { Redirect } from 'react-router-dom'
+import { Redirect, NavLink } from 'react-router-dom'
 
 
 const api = 'http://localhost:3001'
 
 function ListMahasiswa() {
     const [mahasiswa, setMahasiswa] = useState([])
-    const {state} = useContext(AuthContext)
+    const {state,dispatch} = useContext(AuthContext)
 
     const fetchData = () => {
         var config = {
@@ -28,8 +28,20 @@ function ListMahasiswa() {
         })
     }
 
+    const timeout = () => {
+        setTimeout(()=> {
+            console.log("Token telah berakhir")
+            dispatch({
+                type: "LOGOUT"
+            })
+
+        }, state.tokenExpires)
+    }
+
     useEffect(()=>{
         fetchData()
+        // eslint-disable-next-line
+        timeout()
         // eslint-disable-next-line
     }, [])
 
@@ -37,10 +49,12 @@ function ListMahasiswa() {
     if(!state.isAuthenticated){
         return <Redirect to="/login" />
     }
+    
     return (
 
         <Container>
             <h2>Data Mahasiswa</h2>
+            <NavLink to="/cetak"><Button color="secondary">Cetak PDF</Button></NavLink>
             <hr />
             <Table className="table-bordered">
                 <thead>

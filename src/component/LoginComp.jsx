@@ -68,6 +68,9 @@ function LoginComp(props) {
 
                 throw res
             })
+            .catch(e => {
+                console.log(e)
+            })
     }
 
 

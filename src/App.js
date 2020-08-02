@@ -7,6 +7,11 @@ import RegisterComp from './component/RegisterComp';
 import Transaksi from './component/Transaksi';
 import Publik from './component/Publik';
 import ListMahasiswa from './component/ListMahasiswa';
+import RoleAdmin from './component/RoleAkses/RoleAdmin';
+import RoleStaff from './component/RoleAkses/RoleStaff';
+import RoleMember from './component/RoleAkses/RoleMember';
+
+
 
 //Context
 export const AuthContext = createContext()
@@ -15,7 +20,9 @@ export const AuthContext = createContext()
 const initialState = {
   isAuthenticated: false,
   user: null,
-  token: null
+  token: null,
+  tokenExpires: 0,
+  role: 0
 }
 
 const reducer = (state, action) => {
@@ -27,7 +34,10 @@ const reducer = (state, action) => {
         ...state,
         isAuthenticated: true,
         user: action.payload.user,
-        token: action.payload.token
+        token: action.payload.token,
+        tokenExpires: action.payload.expires,
+        role: action.payload.role
+        
       }
     case "LOGOUT":
       localStorage.clear()
@@ -36,9 +46,9 @@ const reducer = (state, action) => {
         isAuthenticated: false,
         user: null
       }
+    
     default:
       return state
-
   }
 }
 
@@ -59,6 +69,12 @@ function App() {
           <Route exact path="/transaksi" component={Transaksi}/>
           <Route exact path="/register" component = {RegisterComp}/>
           <Route exact path="/mahasiswa" component = {ListMahasiswa}/>
+          <Route exact path="/admin" component = {RoleAdmin}/>
+          <Route exact path="/staff" component = {RoleStaff}/>
+          <Route exact path="/member" component = {RoleMember}/>
+
+
+          
         </AuthContext.Provider>
       </Switch>
     </BrowserRouter>
