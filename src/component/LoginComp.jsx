@@ -17,24 +17,30 @@ function LoginComp(props) {
     const { dispatch } = useContext(AuthContext)
 
     const initialState = {
-        email: "",
-        password: "",
         isSubmitting: false,
         errorMessage: null,
         isVerified: false
     }
 
+    const stateForm = {
+        email: "",
+        password: ""
+    }
+    
+
     const [data, setData] = useState(initialState)
+    const [dataform, setDataForm] = useState(stateForm)
 
     // specifying your onload callback function
-    var callback = function () {
+    var callback = () => {
         console.log('Done!!!!');
+
     };
 
     // specifying verify callback function
-    var verifyCallback = function (response) {
+    var verifyCallback = (response) => {
         console.log(response);
-        if(response){
+        if (response) {
             setData({
                 ...data,
                 isVerified: true
@@ -43,33 +49,34 @@ function LoginComp(props) {
     };
 
     const handleInputChange = event => {
-        setData({
-            ...data,
-            [event.target.name]: event.target.value
+        setDataForm({
+            ...dataform,
+            [event.target.name]: event.target.value,
         })
+
     }
 
     const handleFormSubmit = event => {
         event.preventDefault()
 
-        if(data.isVerified){
+        if (data.isVerified) {
             setData({
                 ...data,
                 isSubmitting: true,
                 errorMessage: null
             })
-    
+
             const requestBody = {
-                email: data.email,
-                password: data.password
+                email: dataform.email,
+                password: dataform.password
             }
-    
+
             const config = {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }
-    
+
             axios.post(api + '/auth/api/v1/login', qs.stringify(requestBody), config)
                 .then(res => {
                     if (res.data.success === true && res.data.isVerified === 1) {
@@ -77,11 +84,11 @@ function LoginComp(props) {
                             type: "LOGIN",
                             payload: res.data
                         })
-    
+
                         //redirect ke dashboard
                         props.history.push("/dashboard")
                     }
-                    else if(res.data.success === true && res.data.isVerified === 0){
+                    else if (res.data.success === true && res.data.isVerified === 0) {
                         setData({
                             ...data,
                             isSubmitting: false,
@@ -95,7 +102,7 @@ function LoginComp(props) {
                             errorMessage: res.data.Message
                         })
                     }
-    
+
                     throw res
                 })
                 .catch(e => {
@@ -117,48 +124,59 @@ function LoginComp(props) {
                     </Col>
                     <Col>
                         <h1>Login Form</h1>
+
                         <hr />
+
                         <Form onSubmit={handleFormSubmit}>
                             <FormGroup>
                                 <Label for="exampleEmail">Email</Label>
-                                <Input type="email"
-                                    value={data.email}
+                                <Input
+                                    type="email"
                                     onChange={handleInputChange}
-                                    name="email" id="exampleEmail"
-                                    placeholder="Email Anda" />
+                                    name="email"
+                                    id="exampleEmail"
+                                    placeholder="Email Anda"
+                                    value={dataform.email}
+                                />
                             </FormGroup>
                             <FormGroup>
                                 <Label for="examplePassword">Password</Label>
-                                <Input type="password"
-                                    value={data.password}
+                                <Input
+                                    type="password"
                                     onChange={handleInputChange}
-                                    name="password" id="examplePassword" placeholder="Password anda" />
+                                    name="password"
+                                    id="examplePassword"
+                                    placeholder="Password anda"
+                                    value={dataform.password}
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Recaptcha
+                                    onloadCallback={callback}
+                                    sitekey="6LfQabkZAAAAAK-AjTDGDIB4VTm0RSEtG0XjmePe"
+                                    render="explicit"
+                                    verifyCallback={verifyCallback}
+                                />
                             </FormGroup>
 
-                            <Recaptcha
-                                sitekey="6LfQabkZAAAAAK-AjTDGDIB4VTm0RSEtG0XjmePe"
-                                render="explicit"
-                                verifyCallback={verifyCallback}
-                                onloadCallback={callback}
-                            />
-
-                            <br />
-
-                            {data.errorMessage && (
-                                <div className="alert alert-danger" role="alert">
-                                    {data.errorMessage}
-                                </div>
-                            )}
-
-                            <Button disabled={data.isSubmitting}>
-                                {data.isSubmitting ? (
-                                    "..Loading"
-                                ) :
-                                    (
-                                        "Login"
-                                    )
-                                }
-                            </Button>
+                            <FormGroup>
+                                {data.errorMessage && (
+                                    <div className="alert alert-danger" role="alert">
+                                        {data.errorMessage}
+                                    </div>
+                                )}
+                            </FormGroup>
+                            <FormGroup>
+                                <Button disabled={data.isSubmitting}>
+                                    {data.isSubmitting ? (
+                                        "..Loading"
+                                    ) :
+                                        (
+                                            "Login"
+                                        )
+                                    }
+                                </Button>
+                            </FormGroup>
                         </Form>
                         <p>Belum punya akun? <Link to="/register">Register</Link></p>
                     </Col>
