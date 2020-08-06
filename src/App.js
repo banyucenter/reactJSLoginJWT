@@ -11,8 +11,6 @@ import RoleAdmin from './component/RoleAkses/RoleAdmin';
 import RoleStaff from './component/RoleAkses/RoleStaff';
 import RoleMember from './component/RoleAkses/RoleMember';
 
-
-
 //Context
 export const AuthContext = createContext()
 
@@ -37,7 +35,6 @@ const reducer = (state, action) => {
         token: action.payload.token,
         tokenExpires: action.payload.expires,
         role: action.payload.role
-        
       }
     case "LOGOUT":
       localStorage.clear()
@@ -72,9 +69,6 @@ function App() {
           <Route exact path="/admin" component = {RoleAdmin}/>
           <Route exact path="/staff" component = {RoleStaff}/>
           <Route exact path="/member" component = {RoleMember}/>
-
-
-          
         </AuthContext.Provider>
       </Switch>
     </BrowserRouter>
